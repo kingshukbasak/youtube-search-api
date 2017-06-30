@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<meta charset="UTF-8" />					
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style type="text/css">
+	.container-fluid {
+		padding: 2% 10% 
+	}
+
+	.btn {
+		width: 100%
+	}
+
+	.margin {
+		margin-top: 1px;
+		margin-bottom: 1px;
+	}
+
+	.pic {
+		float: left;	
+		min-width: 20%
+	}
+
+	.title {
+		float: left;
+		min-width: 60%
+	}
+
+	.date {
+		min-width: 20%
+	}
+
+	.header {
+		font-weight: bold; 
+		color : #858C93;
+		font-size: 15px;
+	}
+
+</style>
+<body style="background-color: #EFF0F1">
+	<div class="container-fluid">
+	  	<h3 style="color : #286090">What's On Your Mind ?</h1>
+	  	<div class="row">
+	    	<div class="col-md-8 margin">
+	      		<input type="text" class="form-control" id="usr">
+	    	</div>
+	    	<div class="col-md-2 margin">
+	    		<button type = "button" class="btn btn-primary">Search</button>
+	    	</div>
+	    	<div class="col-md-2 margin">
+	    		<button class="btn btn-info">I'm Feeling Lucky</button>
+	    	</div>
+	  	</div>
+
+
+	  	<div class="row" style="margin-top: 20px">
+	  		<div class="col-md-7 margin">
+	  			<div class="list-group">
+	  			<ul href="#" class="list-group-item header">
+	  				<div class="list-group-item-text pic" style="margin-right: 2px">Thumbnail</div>
+		  			<div class="list-group-item-text title">Title</div>
+		  			<div class="list-group-item-text date">Date</div>
+		  		</ul>
+	  			</div>
+	  			<div class="list-group" style="max-height : 200px; overflow-y:scroll; ">
+				    <a href="#" class="list-group-item active">
+				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic" width="10%" height="10%">
+				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
+				    	<div class="list-group-item-text date">List Group Item Text</div>
+				    </a>
+				    <a href="#" class="list-group-item">
+				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic" width="10%" height="10%">
+				    	<div class="list-group-item-heading title">Second List Group Item Heading</div>
+				     	<div class="list-group-item-text date">List Group Item Text</div>
+				    </a>
+				    <a href="#" class="list-group-item">
+				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic" width="10%" height="10%">
+				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
+				    	<div class="list-group-item-text date">List Group Item Text</div>
+				    </a>
+				    <a href="#" class="list-group-item">
+				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic" width="10%" height="10%">
+				    	<div class="list-group-item-heading title">Second List Group Item Heading</div>
+				     	<div class="list-group-item-text date">List Group Item Text</div>
+				    </a>
+				    
+				</div>
+	  		</div>
+	  		<div class="col-md-5 margin">
+	  			
+	  		</div>
+	  	</div>
+	</div>
+
+</body>
+</html>
