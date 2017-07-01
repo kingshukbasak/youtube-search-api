@@ -1,50 +1,60 @@
 .container-fluid {
-		padding: 2% 10% 
-	}
+	padding: 2% 10% 
+}
 
-	.btn {
-		width: 100%
-	}
+.btn {
+	width: 100%
+}
 
-	.margin {
-		margin-top: 1px;
-		margin-bottom: 1px;
-	}
+.margin {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
 
-	.pic {
-		float: left;	
-		width: 12%;
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-	}
+.pic {
+	float: left;	
+	width: 12%;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
 
-	.title {
-		float: left;
-		width: 65%;
-		padding-left: 5%;
-		padding-right: 5%
-	}
+.title {
+	float: left;
+	width: 65%;
+	padding-left: 5%;
+	padding-right: 5%
+}
 
-	.date {
-		width: 20%;
-		float: left;
-	}
+.date {
+	width: 20%;
+	float: left;
+}
 
-	.header {
-		font-weight: bold; 
-		color : #858C93;
-		font-size: 15px;
-		display: inline-block;
-    	width: 100%;
-	}
+.header {
+	font-weight: bold; 
+	color : #858C93;
+	font-size: 15px;
+	display: inline-block;
+	width: 100%;
+}
 
-	.anchors {
-		display: inline-block;
-    	width: 100%;
-    	min-height: 77px;
-	}
+.anchors {
+	display: inline-block;
+	width: 100%;
+	min-height: 77px;
+}
 
-	#searchContent {
-		visibility: hidden;
-	}
+.glyphicon {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.active {
+	color: #286090
+}
+
+
+#searchContent {
+	visibility: hidden;
+}

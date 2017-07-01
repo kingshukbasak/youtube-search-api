@@ -1,7 +1,8 @@
 
 function init () {
 	$(function(){
-		setup();
+		setUIInteractions();
+		setupYoutubeAPI();
 		manageScroll();
 		createScrollableElem();
 	});
@@ -14,18 +15,34 @@ function init () {
 		lastDrawIndex,
 		pageNumber,	
 		requestFlag,
-		maxResult = 50,
+		maxResult = 10,
 		queuedEnd,
 		queuedStart,
 		setInitialGrid = function () {
 			updateGrid(0, lastDrawIndex);
 			setInitialGrid = function () {
-				if (queuedStart || queuedEnd) {console.log(queuedStart, queuedEnd)
+				if (queuedStart || queuedEnd) {
 					updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
 					queuedEnd = queuedStart = 0;
 				}
 			};
 		};
+
+	function setUIInteractions () {
+		$('.glyphicon').on('click', function () {
+			var clickedDom = this;
+			$('.glyphicon').each(function() {
+				var currentItem = $(this);
+				if (clickedDom === this) {
+					!currentItem.hasClass('active') && currentItem.toggleClass('active');
+					currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down');
+				}
+				else {
+					currentItem.removeClass('active');
+				}
+			});
+		})
+	}
 
 	function createScrollableElem () {
 		var i,
@@ -38,7 +55,7 @@ function init () {
 	}
 
 	// Setting up the youtube API
-	function setup () {
+	function setupYoutubeAPI () {
 		gapi.client.setApiKey('AIzaSyByitsr6ZZ4webABObIce9tmArFlnIMBzw');
 	    gapi.client.load('youtube', 'v3', function() {
 	        $('#search').on('click', function() {
@@ -151,7 +168,7 @@ function init () {
 	function manageScroll () {
 		var scroller = $('#scroller'),
 			scrollerHeight = parseInt(scroller.css('max-height')),
-			minContentHeight = parseInt($('a').css('min-height')),
+			minContentHeight = parseInt($('#info').css('min-height')),
 			prevScrollTop = 0,
 			elementScrolled,
 			currentScrollTop;
