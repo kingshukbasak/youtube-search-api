@@ -2,57 +2,12 @@
 <html>
 <head>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<meta charset="UTF-8" />					
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<style type="text/css">
-	.container-fluid {
-		padding: 2% 10% 
-	}
-
-	.btn {
-		width: 100%
-	}
-
-	.margin {
-		margin-top: 1px;
-		margin-bottom: 1px;
-	}
-
-	.pic {
-		float: left;	
-		width: 12%;
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-	}
-
-	.title {
-		float: left;
-		width: 65%;
-		padding-left: 5%;
-		padding-right: 5%
-	}
-
-	.date {
-		width: 20%;
-		float: left;
-	}
-
-	.header {
-		font-weight: bold; 
-		color : #858C93;
-		font-size: 15px;
-		display: inline-block;
-    	width: 100%;
-	}
-
-	.anchors {
-		display: inline-block;
-    	width: 100%;
-	}
 
 </style>
 <body style="background-color: #EFF0F1; word-wrap: break-word;">
@@ -71,7 +26,7 @@
 	  	</div>
 
 
-	  	<div class="row" style="margin-top: 20px">
+	  	<div class="row" style="margin-top: 20px;" id = "searchContent">
 	  		<div class="col-md-7 margin">
 	  			<div class="list-group">
 	  			<ul href="#" class="list-group-item header">
@@ -81,37 +36,11 @@
 		  		</ul>
 	  			</div>
 	  			<div class="list-group" style="max-height : 300px; overflow-y:scroll;" id="scroller">
-				    <a href="#" class="list-group-item active anchors" id = "info">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">First List Group Item HeadingFirst List Group Item Heading</div>
-				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
-				    <!-- <a href="#" class="list-group-item anchors">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">Second List Group Item Heading</div>
-				     	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
-				    <a href="#" class="list-group-item anchors">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
-				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
-				    <a href="#" class="list-group-item anchors">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
-				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
-				    <a href="#" class="list-group-item anchors">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
-				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
-				    <a href="#" class="list-group-item anchors">
-				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
-				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
-				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a> -->
-				    
+				    <a href="#" class="list-group-item anchors" id = "info">
+				    	<img class="pic">
+				    	<div class="list-group-item-heading title"></div>
+				    	<div class="list-group-item-text date"></div>
+				    </a>				    
 				</div>
 	  		</div>
 	  		<div class="col-md-5 margin">
