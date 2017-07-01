@@ -1,4 +1,3 @@
-
 function init () {
 	$(function(){
 		setUIInteractions();
@@ -35,8 +34,9 @@ function init () {
 			$('.glyphicon').each(function() {
 				var currentItem = $(this);
 				if (clickedDom === this) {
-					!currentItem.hasClass('active') && currentItem.toggleClass('active');
-					currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down');
+					currentItem.hasClass('active') ?
+						currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down') : 
+							currentItem.toggleClass('active');
 				}
 				else {
 					currentItem.removeClass('active');
