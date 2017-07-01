@@ -6,14 +6,25 @@ function init () {
 		createScrollableElem();
 	});
 
-	var storage_title, 
-		storage_date,
+	var storageTitle, 
+		storageDate,
 		scrollElm = [],
-		nextPageToken = '',
+		nextPageToken,
 		maxVisibleItems,
-		lastDrawnIndex,
+		lastDrawIndex,
+		pageNumber,	
+		requestFlag,
+		maxResult = 50,
+		queuedEnd,
+		queuedStart,
 		setInitialGrid = function () {
-			updateGrid(0, lastDrawnIndex);
+			updateGrid(0, lastDrawIndex);
+			setInitialGrid = function () {
+				if (queuedStart || queuedEnd) {console.log(queuedStart, queuedEnd)
+					updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
+					queuedEnd = queuedStart = 0;
+				}
+			};
 		};
 
 	function createScrollableElem () {
@@ -21,19 +32,20 @@ function init () {
 			sample = $('#info');
 
 		scrollElm.push(sample);
-		for (i = 1; i < lastDrawnIndex; i++) {
+		for (i = 1; i < lastDrawIndex; i++) {
 			scrollElm[i] = sample.clone();
 		}
 	}
 
 	// Setting up the youtube API
 	function setup () {
-		$('#info')
 		gapi.client.setApiKey('AIzaSyByitsr6ZZ4webABObIce9tmArFlnIMBzw');
 	    gapi.client.load('youtube', 'v3', function() {
 	        $('#search').on('click', function() {
-	        	storage_title = [];
-	        	storage_date = [];
+	        	storageTitle = [];
+	        	storageDate = [];
+	        	pageNumber = 0;
+	        	nextPageToken = '';
 				executeRequest(createRequest());
 			});
 	    });
@@ -44,7 +56,7 @@ function init () {
             part: 'snippet',
             type: 'video',
             q: encodeURIComponent($('#searchText').val()).replace(/%20/g, '+'),
-            maxResults: 20,
+            maxResults: maxResult,
             order: 'viewCount',
             pageToken : nextPageToken
        }); 
@@ -67,18 +79,17 @@ function init () {
 				obj = {
 					title : snippet.title,
 					publishedAt : new Date(snippet.publishedAt),
-					thumbnail : snippet.thumbnails.default.url,
-					index : i
+					thumbnail : snippet.thumbnails.default.url
 				};
 				tempArrDate.push(obj);
 				tempArrTitle.push(obj);
 			}
 
-			storage_date.push(tempArrDate.sort(function (a, b) {
+			storageDate.push(tempArrDate.sort(function (a, b) {
 				return a.publishedAt < b.publishedAt;
 			}));
 
-			storage_title.push(tempArrTitle.sort(function (a, b) {
+			storageTitle.push(tempArrTitle.sort(function (a, b) {
 				return a.title < b.title;
 			}));
 
@@ -89,23 +100,50 @@ function init () {
 	function updateGrid (start, end) {
 		var i,
 			item,
-			data = storage_date[0],
+			pageNumber = parseInt(start / maxResult),
+			data = storageDate[pageNumber],
 			datum,
-			sample = $('#info');
-
+			sample = $('#info'),
+			counter = start,
+			actualStart = start % maxResult,
+			actualEnd = (end % maxResult) || maxResult;
+	
 		$('#searchContent').css("visibility", "visible");
-		for (i = start; i < end; i++) {
-			datum = data[i];
-			if (!datum) {
-				return false;
+		for (i = actualStart; i < actualEnd; i++, counter++) {
+
+			if (pageNumber !== parseInt(counter / maxResult)) {
+				pageNumber = i % maxResult;
+				data = storageDate[pageNumber];
 			}
-			if (!(item = scrollElm[i])) {
-				item = scrollElm[i] = sample.clone();
+
+			// Response from youtube API is yet to be received so storing relevant data and recalling this function
+			// on callbak. 
+			if (!(data && data[i])) {
+				queuedEnd = end;
+				queuedStart = start;
+				return;
+			}
+
+			datum = data[i];
+
+			if (!(item = scrollElm[counter])) {
+				item = scrollElm[counter] = sample.clone();
 			}
 			item.appendTo('#scroller');
 			item.find('.pic').attr('src', datum.thumbnail);
 			item.find('.title').html(datum.title);
-			item.find('.date').html(datum.index);
+			item.find('.date').html(datum.publishedAt);
+		}
+
+		// setting flag so that search request is not made unnecessarily
+		if (actualStart === 0) {
+			requestFlag = true;
+		}
+
+		// if requestFlag is set and 10% of the previous result has been queried then make a new query
+		if (requestFlag && (actualStart > 0.1 * maxResult)) {
+			requestFlag = false;
+			executeRequest(createRequest());
 		}
 		return true;
 	}
@@ -119,14 +157,16 @@ function init () {
 			currentScrollTop;
 
 		maxVisibleItems = Math.ceil(scrollerHeight / minContentHeight) + 2;
-		lastDrawnIndex = maxVisibleItems + 2;
+		lastDrawIndex = maxVisibleItems + 2;
 		scroller.scroll(function () {
 			currentScrollTop = $(this).scrollTop();
 			if (currentScrollTop > prevScrollTop) {
 				elementScrolled = Math.floor((currentScrollTop - prevScrollTop) / minContentHeight);
-				elementScrolled && updateGrid(lastDrawnIndex, lastDrawnIndex + 1) && lastDrawnIndex++;
+				if (elementScrolled) {
+					updateGrid(lastDrawIndex, lastDrawIndex + 1) && lastDrawIndex++;
+					prevScrollTop = currentScrollTop;
+				}
 			}
-			elementScrolled && (prevScrollTop = currentScrollTop);
 		});
 	}
-};
+}
