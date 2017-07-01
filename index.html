@@ -4,7 +4,6 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
 	<meta charset="UTF-8" />					
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -61,13 +60,13 @@
 	  	<h3 style="color : #286090">What's On Your Mind ?</h1>
 	  	<div class="row">
 	    	<div class="col-md-8 margin">
-	      		<input type="text" class="form-control" id="usr">
+	      		<input type="text" class="form-control" id="searchText">
 	    	</div>
 	    	<div class="col-md-2 margin">
-	    		<button type = "button" class="btn btn-primary">Search</button>
+	    		<button type = "button" class="btn btn-primary" id="search">Search</button>
 	    	</div>
 	    	<div class="col-md-2 margin">
-	    		<button class="btn btn-info">I'm Feeling Lucky</button>
+	    		<button class="btn btn-info" id="luckySearch">I'm Feeling Lucky</button>
 	    	</div>
 	  	</div>
 
@@ -81,13 +80,13 @@
 		  			<div class="list-group-item-text date">Date</div>
 		  		</ul>
 	  			</div>
-	  			<div class="list-group" style="max-height : 300px; overflow-y:scroll; ">
-				    <a href="#" class="list-group-item active anchors">
+	  			<div class="list-group" style="max-height : 300px; overflow-y:scroll;" id="scroller">
+				    <a href="#" class="list-group-item active anchors" id = "info">
 				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
 				    	<div class="list-group-item-heading title">First List Group Item HeadingFirst List Group Item Heading</div>
 				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
 				    </a>
-				    <a href="#" class="list-group-item anchors">
+				    <!-- <a href="#" class="list-group-item anchors">
 				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
 				    	<div class="list-group-item-heading title">Second List Group Item Heading</div>
 				     	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
@@ -111,7 +110,7 @@
 				    	<img src="https://i.ytimg.com/vi/fnGY4_ZsQAU/mqdefault.jpg" class="pic">
 				    	<div class="list-group-item-heading title">First List Group Item Heading</div>
 				    	<div class="list-group-item-text date">2015-01-20T21:00:11.000</div>
-				    </a>
+				    </a> -->
 				    
 				</div>
 	  		</div>
@@ -120,6 +119,7 @@
 	  		</div>
 	  	</div>
 	</div>
-
+	<script src="app.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=init"></script>
 </body>
 </html>
