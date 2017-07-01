@@ -13,19 +13,20 @@ function init () {
 		nextPageToken,
 		maxVisibleItems,
 		lastDrawIndex,
-		pageNumber,	
+		currentPageNumber,
+		previousPageNumber,
 		requestFlag,
-		maxResult = 10,
+		maxResult = 20,
 		queuedEnd,
 		queuedStart,
-		setInitialGrid = function () {
-			updateGrid(0, lastDrawIndex);
-			setInitialGrid = function () {
-				if (queuedStart || queuedEnd) {
-					updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
-					queuedEnd = queuedStart = 0;
-				}
-			};
+		prevScrollTop,
+		minContentHeight,
+
+		optionalGridUpdte = function () {
+			if (queuedStart || queuedEnd) {
+				updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
+				queuedEnd = queuedStart = 0;
+			}
 		};
 
 	function setUIInteractions () {
@@ -50,8 +51,30 @@ function init () {
 
 		scrollElm.push(sample);
 		for (i = 1; i < lastDrawIndex; i++) {
-			scrollElm[i] = sample.clone();
+			scrollElm[i] = sample.clone().appendTo('#scroller');;
 		}
+	}
+
+	function reset () {
+		var scrollerHeight = parseInt($('#scroller').css('max-height')),
+			i,
+			len = scrollElm.length;
+
+		minContentHeight = parseInt($('#info').css('min-height'));
+		maxVisibleItems = Math.ceil(scrollerHeight / minContentHeight) + 2;
+		lastDrawIndex = maxVisibleItems + 2;
+		prevScrollTop = 0;
+		storageTitle = [];
+    	storageDate = [];
+    	currentPageNumber = 0;
+    	nextPageToken = '';
+    	queuedStart = 0;
+    	queuedEnd = 0;
+
+    	// Hiding all the previous search results
+    	for (i = 0; i < len; i++) {
+    		scrollElm[i] && scrollElm[i].hide();
+    	}
 	}
 
 	// Setting up the youtube API
@@ -59,11 +82,9 @@ function init () {
 		gapi.client.setApiKey('AIzaSyByitsr6ZZ4webABObIce9tmArFlnIMBzw');
 	    gapi.client.load('youtube', 'v3', function() {
 	        $('#search').on('click', function() {
-	        	storageTitle = [];
-	        	storageDate = [];
-	        	pageNumber = 0;
-	        	nextPageToken = '';
+	        	reset();
 				executeRequest(createRequest());
+				updateGrid(0, lastDrawIndex);
 			});
 	    });
 	}
@@ -110,15 +131,15 @@ function init () {
 				return a.title < b.title;
 			}));
 
-			setInitialGrid && setInitialGrid();
+			optionalGridUpdte();
        	});
 	}
 
 	function updateGrid (start, end) {
 		var i,
 			item,
-			pageNumber = parseInt(start / maxResult),
-			data = storageDate[pageNumber],
+			currentPageNumber = parseInt(start / maxResult),
+			data = storageDate[currentPageNumber],
 			datum,
 			sample = $('#info'),
 			counter = start,
@@ -128,9 +149,9 @@ function init () {
 		$('#searchContent').css("visibility", "visible");
 		for (i = actualStart; i < actualEnd; i++, counter++) {
 
-			if (pageNumber !== parseInt(counter / maxResult)) {
-				pageNumber = i % maxResult;
-				data = storageDate[pageNumber];
+			if (currentPageNumber !== parseInt(counter / maxResult)) {
+				currentPageNumber = i % maxResult;
+				data = storageDate[currentPageNumber];
 			}
 
 			// Response from youtube API is yet to be received so storing relevant data and recalling this function
@@ -145,8 +166,9 @@ function init () {
 
 			if (!(item = scrollElm[counter])) {
 				item = scrollElm[counter] = sample.clone();
+				item.appendTo('#scroller');
 			}
-			item.appendTo('#scroller');
+			item.show()
 			item.find('.pic').attr('src', datum.thumbnail);
 			item.find('.title').html(datum.title);
 			item.find('.date').html(datum.publishedAt);
@@ -167,14 +189,9 @@ function init () {
 
 	function manageScroll () {
 		var scroller = $('#scroller'),
-			scrollerHeight = parseInt(scroller.css('max-height')),
-			minContentHeight = parseInt($('#info').css('min-height')),
-			prevScrollTop = 0,
 			elementScrolled,
 			currentScrollTop;
 
-		maxVisibleItems = Math.ceil(scrollerHeight / minContentHeight) + 2;
-		lastDrawIndex = maxVisibleItems + 2;
 		scroller.scroll(function () {
 			currentScrollTop = $(this).scrollTop();
 			if (currentScrollTop > prevScrollTop) {
