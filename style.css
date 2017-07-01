@@ -42,6 +42,7 @@
 	.anchors {
 		display: inline-block;
     	width: 100%;
+    	min-height: 77px;
 	}
 
 	#searchContent {
