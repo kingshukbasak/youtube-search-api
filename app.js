@@ -56,6 +56,7 @@ function init () {
 			i,
 			j,
 			numOfPages,
+			endIndex,
 			item;
 
 		if (prevStorageKey !== storageKey) {
@@ -64,6 +65,11 @@ function init () {
 		else {
 			len = scrollElm.length;
 			numOfPages = Math.floor(len / maxResult);
+
+			endIndex = lastDrawIndex + (maxResult - lastDrawIndex % maxResult);
+			// Drawing all the scroll element of the current page
+			updateGrid(lastDrawIndex, endIndex) &&
+				(lastDrawIndex += endIndex);
 
 			function helperFN (i, j) {
 				index = maxResult * j + i;
