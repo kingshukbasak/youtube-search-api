@@ -14,7 +14,7 @@ function init () {
 		currentPageNumber,
 		previousPageNumber,
 		requestFlag,
-		maxResult = 50,
+		maxResult = 20,
 		queuedEnd,
 		queuedStart,
 		prevScrollTop,
@@ -24,7 +24,7 @@ function init () {
 
 	function optionalGridUpdte () {
 		if (queuedStart || queuedEnd) {
-			updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
+			updateGrid(queuedStart, queuedEnd + maxVisibleItems) && (lastDrawIndex += maxVisibleItems);
 			queuedEnd = queuedStart = 0;
 		}
 	}
@@ -122,7 +122,7 @@ function init () {
 		return 0;
 	}
 
-	function executeRequest (request) {
+	function executeRequest (request) {console.log('req')
 		request.execute(function (response) {
 			var result = response.result,
 				items = result.items,
@@ -167,6 +167,7 @@ function init () {
 			temp,
 			index,
 			sample = $('#info'),
+			applyColor = currentPageNumber % 2;
 			index = start % calculatedMaxResult;
 	
 		$('#searchContent').css("visibility", "visible");
@@ -174,14 +175,15 @@ function init () {
 			if (currentPageNumber !== (temp = Math.floor(i / calculatedMaxResult))) {
 				currentPageNumber = temp;
 				index = 0;
+				applyColor = currentPageNumber % 2;
 				data = storage[storageKey][currentPageNumber];
 			}
 
 			// Response from youtube API is yet to be received so storing relevant data and recalling this function
-			// on callbak. 
+			// on callbak. 	
 			if (!(data && data[index])) {
 				queuedEnd = end;
-				queuedStart = index;
+				queuedStart = start;
 				return;
 			}
 
@@ -192,6 +194,7 @@ function init () {
 				item.appendTo('#scroller');
 			}
 			item.show()
+			item.css('background-color', applyColor ? '#cfeef7' : '#ffffff');
 			item.find('.pic').attr('src', datum.thumbnail);
 			item.find('.title').html(datum.title);
 			item.find('.date').html(datum.modifiedDate);
@@ -203,7 +206,7 @@ function init () {
 		}
 
 		// if requestFlag is set and 10% of the previous result has been queried then make a new query
-		if (requestFlag && (start > 0.1 * calculatedMaxResult)) {
+		if (requestFlag && (end > 0.1 * calculatedMaxResult)) {
 			requestFlag = false;
 			executeRequest(createRequest());
 		}
