@@ -19,6 +19,7 @@ function init () {
 		queuedStart,
 		prevScrollTop,
 		storageKey,
+		prevStorageKey,
 		order,
 		minContentHeight;
 
@@ -44,14 +45,46 @@ function init () {
 					handleDataToggling();
 				}
 				else {
-					currentItem.removeClass('active');
+					currentItem.removeClass('active glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 				}
 			});
 		})
 	}
 
 	function handleDataToggling () {
-		updateGrid(0, scrollElm.length, true);
+		var len,
+			i,
+			j,
+			numOfPages,
+			item;
+
+		if (prevStorageKey !== storageKey) {
+			updateGrid(0, scrollElm.length, true);
+		}
+		else {
+			len = scrollElm.length;
+			numOfPages = Math.floor(len / maxResult);
+
+			function helperFN (i, j) {
+				index = maxResult * j + i;
+				item = scrollElm[index];
+				item && item.appendTo('#scroller');
+			}
+
+			for (j = 0; j <= numOfPages; j++) {
+				if (order === 'ascending') {
+					for (i = maxResult - 1; i >= 0; i--) {
+						helperFN(i, j);
+					}
+				}
+				else {
+					for (i = 0; i < maxResult; i++) {
+						helperFN(i, j);
+					}
+				}
+			}
+		}
+		prevStorageKey = storageKey;
 	}
 
 	function createScrollableElem () {
@@ -60,7 +93,7 @@ function init () {
 
 		scrollElm.push(sample);
 		for (i = 1; i < lastDrawIndex; i++) {
-			scrollElm[i] = sample.clone().appendTo('#scroller');;
+			scrollElm[i] = sample.clone();
 		}
 	}
 
@@ -81,7 +114,13 @@ function init () {
     	nextPageToken = '';
     	queuedStart = 0;
     	queuedEnd = 0;
-    	storageKey = $('#storageDate').hasClass('active') ? 'storageDate' : 'storageTitle'
+    	order = undefined;
+    	
+    	$('#storageDate').addClass('active glyphicon-chevron-down').removeClass('glyphicon-chevron-up');
+    	$('#storageTitle').addClass('glyphicon-chevron-down').removeClass('glyphicon-chevron-up active');
+
+    	prevStorageKey = storageKey = $('#storageDate').hasClass('active') ? 'storageDate' : 'storageTitle';
+
 
     	// Hiding all the previous search results
     	for (i = 0; i < len; i++) {
@@ -114,15 +153,15 @@ function init () {
 
 	function compare(a,b) {
 		if (a.title < b.title) {
-			return -1;
+			return 1;
 		}
 		if (a.title > b.title){
-			return 1;
+			return -1;
 		}
 		return 0;
 	}
 
-	function executeRequest (request) {console.log('req')
+	function executeRequest (request) {
 		request.execute(function (response) {
 			var result = response.result,
 				items = result.items,
@@ -160,19 +199,18 @@ function init () {
 	function updateGrid (start, end) {
 		var i,
 			item,
-			calculatedMaxResult = maxResult,
-			currentPageNumber = Math.floor(start / calculatedMaxResult),
+			currentPageNumber = Math.floor(start / maxResult),
 			data = storage[storageKey][currentPageNumber],
 			datum,
 			temp,
 			index,
 			sample = $('#info'),
 			applyColor = currentPageNumber % 2;
-			index = start % calculatedMaxResult;
+			index = start % maxResult;
 	
 		$('#searchContent').css("visibility", "visible");
 		for (i = start; i < end; i++, index++) {
-			if (currentPageNumber !== (temp = Math.floor(i / calculatedMaxResult))) {
+			if (currentPageNumber !== (temp = Math.floor(i / maxResult))) {
 				currentPageNumber = temp;
 				index = 0;
 				applyColor = currentPageNumber % 2;
@@ -191,8 +229,8 @@ function init () {
 
 			if (!(item = scrollElm[i])) {
 				item = scrollElm[i] = sample.clone();
-				item.appendTo('#scroller');
 			}
+			item.appendTo('#scroller');
 			item.show()
 			item.css('background-color', applyColor ? '#cfeef7' : '#ffffff');
 			item.find('.pic').attr('src', datum.thumbnail);
@@ -206,7 +244,7 @@ function init () {
 		}
 
 		// if requestFlag is set and 10% of the previous result has been queried then make a new query
-		if (requestFlag && (end > 0.1 * calculatedMaxResult)) {
+		if (requestFlag && (end > 0.1 * maxResult)) {
 			requestFlag = false;
 			executeRequest(createRequest());
 		}
