@@ -350,7 +350,7 @@ function init () {
 				elementScrolled = Math.floor((currentScrollTop - prevScrollTop) / minContentHeight);
 				// If a complete block is scrolled up only then call the updateGrid function
 				if (elementScrolled) {
-					updateGrid(lastDrawIndex, lastDrawIndex + 1);
+					updateGrid(lastDrawIndex, lastDrawIndex + 3);
 					prevScrollTop = currentScrollTop;
 				}
 			}
