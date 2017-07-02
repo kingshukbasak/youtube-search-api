@@ -14,14 +14,15 @@ function init () {
 		currentPageNumber,
 		previousPageNumber,
 		requestFlag,
-		maxResult = 20,
+		maxResult = 50,
 		queuedEnd,
 		queuedStart,
 		prevScrollTop,
 		storageKey,
 		prevStorageKey,
 		order,
-		minContentHeight;
+		minContentHeight,
+		luckySearch;
 
 	function optionalGridUpdte () {
 		if (queuedStart || queuedEnd) {
@@ -99,7 +100,7 @@ function init () {
 
 		scrollElm.push(sample);
 		for (i = 1; i < lastDrawIndex; i++) {
-			scrollElm[i] = sample.clone();
+			scrollElm[i] = sample.clone(true);
 		}
 	}
 
@@ -143,6 +144,16 @@ function init () {
 				executeRequest(createRequest());
 				updateGrid(0, lastDrawIndex);
 			});
+
+	        $('a').on('click', function(e) {
+	        	$('iframe')[0].src = 'https://www.youtube.com/embed/' + $(this).data('videoId') +
+					'?autoplay=1';
+	        });
+
+	        $('#luckySearch').on('click', function () {
+	        	$('#search').click();
+	        	luckySearch = true;
+	        });
 	    });
 	}
 
@@ -187,7 +198,8 @@ function init () {
 					title : snippet.title,
 					publishedAt : date,
 					thumbnail : snippet.thumbnails.default.url,
-					modifiedDate : date.toString().match(/.+?(?=GMT)/)[0]
+					modifiedDate : date.toString().match(/.+?(?=GMT)/)[0],
+					videoId : items[i].id.videoId
 				};
 				tempArrDate.push(obj);
 				tempArrTitle.push(obj);
@@ -199,6 +211,12 @@ function init () {
 			storage.storageTitle.push(tempArrTitle.sort(compare));
 
 			optionalGridUpdte();
+
+			if (luckySearch) {
+				$('iframe')[0].src = 'https://www.youtube.com/embed/' + $(scrollElm[0]).data('videoId') +
+					'?autoplay=1';
+				luckySearch = false;
+			}
        	});
 	}
 
@@ -234,9 +252,10 @@ function init () {
 			datum = data[index];
 
 			if (!(item = scrollElm[i])) {
-				item = scrollElm[i] = sample.clone();
+				item = scrollElm[i] = sample.clone(true);
 			}
 			item.appendTo('#scroller');
+			item.data('videoId', datum.videoId);
 			item.show()
 			item.css('background-color', applyColor ? '#cfeef7' : '#ffffff');
 			item.find('.pic').attr('src', datum.thumbnail);
