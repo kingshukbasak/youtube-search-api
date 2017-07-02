@@ -182,6 +182,12 @@ function init () {
 	        	$('#search').click();
 	        	luckySearch = true;
 	        });
+
+	        $("#searchText").on('keyup', function (e) {
+			    if (e.keyCode === 13) {
+			        $('#search').click();
+			    }
+			});
 	    });
 	}
 
@@ -192,11 +198,11 @@ function init () {
 		return gapi.client.youtube.search.list({
             part: 'snippet',
             type: 'video',
-            q: encodeURIComponent($('#searchText').val()).replace(/%20/g, '+'),
+            q: encodeURIComponent($('#searchText').val().replace(/\s\s+/g, ' ')).replace(/%20/g, '+'),
             maxResults: maxResult,
             order: 'viewCount',
             pageToken : nextPageToken
-       }); 
+       });
 	}
 
 	/**
