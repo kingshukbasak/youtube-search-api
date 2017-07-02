@@ -1,13 +1,12 @@
 function init () {
 	$(function(){
-		setUIInteractions();
+		setOrderingUI();
 		setupYoutubeAPI();
 		manageScroll();
 		createScrollableElem();
 	});
 
-	var storageTitle, 
-		storageDate,
+	var storage,
 		scrollElm = [],
 		nextPageToken,
 		maxVisibleItems,
@@ -15,20 +14,22 @@ function init () {
 		currentPageNumber,
 		previousPageNumber,
 		requestFlag,
-		maxResult = 20,
+		maxResult = 50,
 		queuedEnd,
 		queuedStart,
 		prevScrollTop,
-		minContentHeight,
+		storageKey,
+		order,
+		minContentHeight;
 
-		optionalGridUpdte = function () {
-			if (queuedStart || queuedEnd) {
-				updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
-				queuedEnd = queuedStart = 0;
-			}
-		};
+	function optionalGridUpdte () {
+		if (queuedStart || queuedEnd) {
+			updateGrid(queuedStart, queuedEnd + 2) && (lastDrawIndex += 3);
+			queuedEnd = queuedStart = 0;
+		}
+	}
 
-	function setUIInteractions () {
+	function setOrderingUI () {
 		$('.glyphicon').on('click', function () {
 			var clickedDom = this;
 			$('.glyphicon').each(function() {
@@ -37,12 +38,20 @@ function init () {
 					currentItem.hasClass('active') ?
 						currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down') : 
 							currentItem.toggleClass('active');
+
+					storageKey = this.id;
+					order = currentItem.hasClass('glyphicon-chevron-up') ? 'ascending' : 'descending';
+					handleDataToggling();
 				}
 				else {
 					currentItem.removeClass('active');
 				}
 			});
 		})
+	}
+
+	function handleDataToggling () {
+		updateGrid(0, scrollElm.length, true);
 	}
 
 	function createScrollableElem () {
@@ -64,12 +73,15 @@ function init () {
 		maxVisibleItems = Math.ceil(scrollerHeight / minContentHeight) + 2;
 		lastDrawIndex = maxVisibleItems + 2;
 		prevScrollTop = 0;
-		storageTitle = [];
-    	storageDate = [];
+		storage = {
+			storageTitle : [],
+	    	storageDate : []
+	    };
     	currentPageNumber = 0;
     	nextPageToken = '';
     	queuedStart = 0;
     	queuedEnd = 0;
+    	storageKey = $('#storageDate').hasClass('active') ? 'storageDate' : 'storageTitle'
 
     	// Hiding all the previous search results
     	for (i = 0; i < len; i++) {
@@ -100,6 +112,16 @@ function init () {
        }); 
 	}
 
+	function compare(a,b) {
+		if (a.title < b.title) {
+			return -1;
+		}
+		if (a.title > b.title){
+			return 1;
+		}
+		return 0;
+	}
+
 	function executeRequest (request) {
 		request.execute(function (response) {
 			var result = response.result,
@@ -107,6 +129,7 @@ function init () {
 				i,
 				obj,
 				len,
+				date,
 				tempArrDate = [],
 				tempArrTitle = [],
 				snippet;
@@ -114,22 +137,21 @@ function init () {
 			nextPageToken = response.nextPageToken;
 			for (i = 0, len = items.length; i < len; i ++) {
 				snippet = items[i].snippet;
+				date = new Date(snippet.publishedAt);
 				obj = {
 					title : snippet.title,
-					publishedAt : new Date(snippet.publishedAt),
-					thumbnail : snippet.thumbnails.default.url
+					publishedAt : date,
+					thumbnail : snippet.thumbnails.default.url,
+					modifiedDate : date.toString().match(/.+?(?=GMT)/)[0]
 				};
 				tempArrDate.push(obj);
 				tempArrTitle.push(obj);
 			}
 
-			storageDate.push(tempArrDate.sort(function (a, b) {
-				return a.publishedAt < b.publishedAt;
+			storage.storageDate.push(tempArrDate.sort(function (a, b) {
+				return b.publishedAt - a.publishedAt;
 			}));
-
-			storageTitle.push(tempArrTitle.sort(function (a, b) {
-				return a.title < b.title;
-			}));
+			storage.storageTitle.push(tempArrTitle.sort(compare));
 
 			optionalGridUpdte();
        	});
@@ -138,49 +160,50 @@ function init () {
 	function updateGrid (start, end) {
 		var i,
 			item,
-			currentPageNumber = parseInt(start / maxResult),
-			data = storageDate[currentPageNumber],
+			calculatedMaxResult = maxResult,
+			currentPageNumber = Math.floor(start / calculatedMaxResult),
+			data = storage[storageKey][currentPageNumber],
 			datum,
+			temp,
+			index,
 			sample = $('#info'),
-			counter = start,
-			actualStart = start % maxResult,
-			actualEnd = (end % maxResult) || maxResult;
+			index = start % calculatedMaxResult;
 	
 		$('#searchContent').css("visibility", "visible");
-		for (i = actualStart; i < actualEnd; i++, counter++) {
-
-			if (currentPageNumber !== parseInt(counter / maxResult)) {
-				currentPageNumber = i % maxResult;
-				data = storageDate[currentPageNumber];
+		for (i = start; i < end; i++, index++) {
+			if (currentPageNumber !== (temp = Math.floor(i / calculatedMaxResult))) {
+				currentPageNumber = temp;
+				index = 0;
+				data = storage[storageKey][currentPageNumber];
 			}
 
 			// Response from youtube API is yet to be received so storing relevant data and recalling this function
 			// on callbak. 
-			if (!(data && data[i])) {
+			if (!(data && data[index])) {
 				queuedEnd = end;
-				queuedStart = start;
+				queuedStart = index;
 				return;
 			}
 
-			datum = data[i];
+			datum = data[index];
 
-			if (!(item = scrollElm[counter])) {
-				item = scrollElm[counter] = sample.clone();
+			if (!(item = scrollElm[i])) {
+				item = scrollElm[i] = sample.clone();
 				item.appendTo('#scroller');
 			}
 			item.show()
 			item.find('.pic').attr('src', datum.thumbnail);
 			item.find('.title').html(datum.title);
-			item.find('.date').html(datum.publishedAt);
-		}
+			item.find('.date').html(datum.modifiedDate);
 
-		// setting flag so that search request is not made unnecessarily
-		if (actualStart === 0) {
-			requestFlag = true;
+			// setting flag so that search request is not made unnecessarily
+			if (index === 0) {
+				requestFlag = true;
+			}
 		}
 
 		// if requestFlag is set and 10% of the previous result has been queried then make a new query
-		if (requestFlag && (actualStart > 0.1 * maxResult)) {
+		if (requestFlag && (start > 0.1 * calculatedMaxResult)) {
 			requestFlag = false;
 			executeRequest(createRequest());
 		}

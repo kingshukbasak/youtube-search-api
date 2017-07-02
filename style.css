@@ -48,6 +48,7 @@
 .glyphicon {
 	cursor: pointer;
 	cursor: hand;
+	padding-left: 5%;
 }
 
 .active {
