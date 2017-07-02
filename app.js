@@ -1,5 +1,5 @@
 function init () {
-	$(function(){
+	$(function() {
 		setOrderingUI();
 		setupYoutubeAPI();
 		manageScroll();
@@ -11,8 +11,6 @@ function init () {
 		nextPageToken,
 		maxVisibleItems,
 		lastDrawIndex,
-		currentPageNumber,
-		previousPageNumber,
 		requestFlag,
 		maxResult = 50,
 		queuedEnd,
@@ -38,7 +36,7 @@ function init () {
 				var currentItem = $(this);
 				if (clickedDom === this) {
 					currentItem.hasClass('active') ?
-						currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down') : 
+						currentItem.toggleClass('glyphicon-chevron-up glyphicon-chevron-down') :
 							currentItem.toggleClass('active');
 
 					storageKey = this.id;
@@ -49,7 +47,7 @@ function init () {
 					currentItem.removeClass('active glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 				}
 			});
-		})
+		});
 	}
 
 	function handleDataToggling () {
@@ -168,7 +166,7 @@ function init () {
        }); 
 	}
 
-	function compare(a,b) {
+	function compare (a,b) {
 		if (a.title < b.title) {
 			return 1;
 		}
@@ -232,7 +230,7 @@ function init () {
 			applyColor = currentPageNumber % 2;
 			index = start % maxResult;
 	
-		$('#searchContent').css("visibility", "visible");
+		$('#searchContent').css('visibility', 'visible');
 		for (i = start; i < end; i++, index++) {
 			if (currentPageNumber !== (temp = Math.floor(i / maxResult))) {
 				currentPageNumber = temp;
@@ -256,7 +254,7 @@ function init () {
 			}
 			item.appendTo('#scroller');
 			item.data('videoId', datum.videoId);
-			item.show()
+			item.show();
 			item.css('background-color', applyColor ? '#cfeef7' : '#ffffff');
 			item.find('.pic').attr('src', datum.thumbnail);
 			item.find('.title').html(datum.title);
