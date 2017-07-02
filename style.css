@@ -1,9 +1,9 @@
 .container-fluid {
-	padding: 2% 10% 
+	padding: 2% 10%;
 }
 
 .btn {
-	width: 100%
+	width: 100%;
 }
 
 .margin {
@@ -23,7 +23,7 @@
 	float: left;
 	width: 65%;
 	padding-left: 5%;
-	padding-right: 5%
+	padding-right: 5%;
 }
 
 .date {
@@ -52,9 +52,8 @@
 }
 
 .active {
-	color: #286090
+	color: #286090;
 }
-
 
 #searchContent {
 	visibility: hidden;
